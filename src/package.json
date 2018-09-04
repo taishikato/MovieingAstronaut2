@@ -14,8 +14,11 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "bulma": "^0.7.1",
     "isomorphic-fetch": "^2.2.1",
-    "nuxt": "^1.0.0"
+    "node-sass": "^4.9.3",
+    "nuxt": "^1.0.0",
+    "sass-loader": "^7.1.0"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.1",

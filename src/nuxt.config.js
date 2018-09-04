@@ -22,6 +22,11 @@ module.exports = {
   */
   buildDir: '../functions/nuxt',
   build: {
+    postcss: {
+      plugins: {
+        'postcss-custom-properties': false
+      }
+    },
     publicPath: '/',
     vendor: ['isomorphic-fetch'],
     extraCSS: true,
@@ -49,6 +54,13 @@ module.exports = {
         })
       }
     }
-  }
+  },
+  /*
+  ** Include css not in components
+  */
+  css: [
+    // node.js module but we specify the pre-processor
+    { src: 'bulma/bulma.sass', lang: 'sass' }
+  ]
 }
 
