@@ -16,7 +16,7 @@
 
         <div id="navbarExampleTransparentExample" class="navbar-menu">
           <div class="navbar-start">
-            <nuxt-link class="navbar-item" to="./api">api page</nuxt-link>
+            <a class="navbar-item" href="/api">api page</a>
           </div>
         </div>
       </div>

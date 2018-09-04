@@ -1,18 +1,21 @@
 <template>
   <div>
-    {{ facts1 }}
+    {{ movies }}
+    <ul>
+      <li v-for="movie in movies" :key="movie.imdbID">
+        <a :href="`/detail/${movie.imdbID}`">
+          <img :src="movie.Poster" width="100px" />
+          {{ movie.Title }}
+        </a>
+      </li>
+    </ul>
   </div>
 </template>
 
 <script>
-// import fetch from 'isomorphic-fetch';
-import axios from 'axios';
-
 export default {
   async asyncData(context) {
-    console.log('yeah');
-    const { data } = await axios.get('https://www.omdbapi.com/?s=star wars&apikey=1b46575f')
-    return { facts1: data };
+    return { movies: context.req.maData.apiResult.Search };
   }
 }
 </script>
