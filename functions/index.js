@@ -6,7 +6,7 @@ const axios = require('axios');
 const app = express();
 
 const config = {
-  dev: true,
+  dev: false,
   buildDir: 'nuxt',
   build: {
     publicPath: '/'
