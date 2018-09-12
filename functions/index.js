@@ -25,12 +25,13 @@ app.get('/', (req, res) => {
   });
 });
 
-app.get('/api', (req, res) => {
+app.get('/search', (req, res) => {
   (async () => {
-    const { data } = await axios.get('https://www.omdbapi.com/?s=star wars&apikey=1b46575f');
+    const query = req.query.query;
+    const { data } = await axios.get(`https://www.omdbapi.com/?s=${query}&apikey=1b46575f`);
     req.maData = {};
     req.maData.apiResult = data;
-    nuxt.renderRoute('/api', { req })
+    nuxt.renderRoute(`/search/${query}`, { req })
     .then(result => {
       res.send(result.html);
     })

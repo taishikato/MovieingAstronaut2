@@ -1,6 +1,8 @@
 <template>
   <div>
     {{ movie }}
+    <h2 class="title is-2">{{ movie.Title }}</h2>
+    <img :src="movie.Poster" />
   </div>
 </template>
 

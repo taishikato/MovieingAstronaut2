@@ -1,12 +1,14 @@
 <template>
   <div class="container">
     <div class="field">
-      <div class="control">
-        <input class="input is-rounded" type="text" placeholder="Normal input">
-      </div>
-      <div class="control">
-        <button type="submit" class="button is-primary" placeholder="Normal input">Submit</button>
-      </div>
+      <form action="/search" method="get">
+        <div class="control">
+          <input class="input is-rounded" type="text" name="query" placeholder="Normal input">
+        </div>
+        <div class="control">
+          <input type="submit" class="button is-primary" placeholder="Normal input" />
+        </div>
+      </form>
     </div>
   </div>
 </template>
@@ -14,7 +16,9 @@
 <script>
 
 export default {
-  asyncData() {
+  data() {
+    return {
+    }
   }
 }
 </script>
