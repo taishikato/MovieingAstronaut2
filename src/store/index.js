@@ -23,6 +23,9 @@ const store = () => new Vuex.Store({
     changeLoginStatus (state, isLogin) {
       state.loginStatus = isLogin.status;
     },
+    changeUser (state, data) {
+      state.user = data.user;
+    },
     ...firebaseMutations
   },
   getters: {
@@ -32,6 +35,9 @@ const store = () => new Vuex.Store({
   actions: {
     BIND_USER: firebaseAction(({ bindFirebaseRef }, user) => {
       bindFirebaseRef('user', usersRef.doc(user.uid));
+    }),
+    UNBIND_USER: firebaseAction(({ bindFirebaseRef, unbindFirebaseRef }, user) => {
+      unbindFirebaseRef('user');
     }),
   }
 });

@@ -18,6 +18,9 @@
           <div class="navbar-start">
             <a @click.prevent="loginWithGoogle" class="navbar-item">ログイン</a>
           </div>
+          <div class="navbar-start">
+            <a @click.prevent="logout" class="navbar-item">ログアウト</a>
+          </div>
         </div>
       </div>
     </nav>
@@ -40,6 +43,7 @@ const googleProvider = new firebase.auth.GoogleAuthProvider();
 import getRedirectResult from '~/plugins/getRedirectResult';
 import auth from '~/plugins/auth';
 import saveData from '~/plugins/saveData';
+import getUser from '~/plugins/getUser';
 import { mapGetters } from 'vuex';
 
 const getUnixTime = () => {
@@ -58,6 +62,7 @@ export default {
   async beforeCreate() {
     if (process.browser) {
       const authUser = await auth();
+      console.log(authUser);
       if (authUser === false) {
         console.log('未ログイン');
         return;
@@ -80,12 +85,13 @@ export default {
         newUserData.userId = userUid;
         newUserData.picture = 'https://res.cloudinary.com/guidesquare/image/upload/v1526218605/profile-default.png';
         await saveData(usersRef, newUserData);
-        // const userInfo = await getUser(userUid, firestore);
-        // this.user = userInfo.data();
+        const userInfo = await getUser(usersRef);
+        this.user = userInfo.data();
+        console.log(this.user);
       }
 
       // Vuex
-      // Firestoreと紐付
+      // Firestoreとバインド
       await this.$store.dispatch('BIND_USER', authUser);
       // Login Statusを変更
       this.$store.commit('changeLoginStatus', {
@@ -96,6 +102,21 @@ export default {
     }
   },
   methods: {
+    async logout() {
+      const self = this;
+      // Logout
+      await firebase.auth().signOut();
+      // Firestoreとアンバインド
+      await this.$store.dispatch('UNBIND_USER');
+      // CommitでVuexの値を変更
+      this.$store.commit('changeUser', {
+        user: null
+      });
+      self.$store.commit('changeLoginStatus',{
+        status: false
+      });
+      self.isLogin = false;
+    },
     loginWithGoogle() {
       firebase.auth().signInWithRedirect(googleProvider);
     }
