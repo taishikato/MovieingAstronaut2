@@ -48,33 +48,51 @@ const getUnixTime = () => {
 };
 
 export default {
+  data() {
+    return {
+      user: null,
+      isLogin: false,
+      isLoading: true,
+    }
+  },
   async beforeCreate() {
     if (process.browser) {
       const authUser = await auth();
-      console.log(authUser);
       if (authUser === false) {
         console.log('未ログイン');
+        return;
       }
       // ログイン時の情報取得
       const result = await getRedirectResult();
-      if (result.user === null) return;
+      if (result.user !== null) {
 
-      console.log('signupします')
-      const userData = result.user;
-      const userUid = userData.uid;
-      const usersRef = firestore.collection('users').doc(userUid);
-      let newUserData = {
-        displayName: userData.displayName,
-        email      : userData.email,
-      };
-      // Signup
-      this.userId = userData.uid;
-      newUserData.created = getUnixTime();
-      newUserData.userId = userUid;
-      newUserData.picture = 'https://res.cloudinary.com/guidesquare/image/upload/v1526218605/profile-default.png';
-      await saveData(usersRef, newUserData);
-      // const userInfo = await getUser(userUid, firestore);
-      this.user = userInfo.data();
+        console.log('signupします');
+        const userData = result.user;
+        const userUid = userData.uid;
+        const usersRef = firestore.collection('users').doc(userUid);
+        let newUserData = {
+          displayName: userData.displayName,
+          email: userData.email,
+        };
+        // Signup
+        this.userId = userData.uid;
+        newUserData.created = getUnixTime();
+        newUserData.userId = userUid;
+        newUserData.picture = 'https://res.cloudinary.com/guidesquare/image/upload/v1526218605/profile-default.png';
+        await saveData(usersRef, newUserData);
+        // const userInfo = await getUser(userUid, firestore);
+        // this.user = userInfo.data();
+      }
+
+      // Vuex
+      // Firestoreと紐付
+      await this.$store.dispatch('BIND_USER', authUser);
+      // Login Statusを変更
+      this.$store.commit('changeLoginStatus', {
+        status: true
+      });
+      this.isLogin = this.$store.getters.getLoginStatus;
+      this.isLoading = false;
     }
   },
   methods: {

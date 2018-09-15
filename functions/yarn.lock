@@ -235,6 +235,10 @@
     mustache "^2.3.0"
     stack-trace "0.0.10"
 
+"@posva/vuefire-core@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@posva/vuefire-core/-/vuefire-core-1.0.2.tgz#a9b0bdc755a5365da5d401e4493759a442eb43f2"
+
 "@protobufjs/aspromise@^1.1.1", "@protobufjs/aspromise@^1.1.2":
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/@protobufjs/aspromise/-/aspromise-1.1.2.tgz#9b8b0cc663d669a7d8f6f5d0893a14d348f30fbf"
@@ -6759,6 +6763,12 @@ vue@^2.5.17:
 vuex@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/vuex/-/vuex-3.0.1.tgz#e761352ebe0af537d4bb755a9b9dc4be3df7efd2"
+
+vuexfire@^3.0.0-alpha.9:
+  version "3.0.0-alpha.9"
+  resolved "https://registry.yarnpkg.com/vuexfire/-/vuexfire-3.0.0-alpha.9.tgz#3ca5652aacad6c7f3b8431fd7f3a0180563de857"
+  dependencies:
+    "@posva/vuefire-core" "^1.0.2"
 
 watchpack@^1.4.0:
   version "1.6.0"
