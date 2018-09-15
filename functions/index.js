@@ -57,5 +57,16 @@ app.get('/detail/:movie_id', (req, res) => {
   })();
 });
 
+app.get('/quote/add/:movie_id', (req, res) => {
+  const movieId = req.params.movie_id;
+  (async () => {
+    const { data } = await axios.get(`https://www.omdbapi.com/?i=${movieId}&apikey=1b46575f`);
+    req.maData = {};
+    req.maData.apiResult = data;
+    const result = await nuxt.renderRoute(`/quote/add/${movieId}`, { req })
+    res.send(result.html);
+  })();
+});
+
 
 exports.ssrapp = functions.https.onRequest(app);

@@ -3,9 +3,9 @@
     <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
       <div class="container">
         <div class="navbar-brand">
-          <nuxt-link class="navbar-item" to="/">
+          <a class="navbar-item" href="/">
             MA
-          </nuxt-link>
+          </a>
 
           <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
             <span aria-hidden="true"></span>
@@ -16,7 +16,7 @@
 
         <div id="navbarExampleTransparentExample" class="navbar-menu">
           <div class="navbar-start">
-            <a class="navbar-item" href="#">メニュー</a>
+            <a @click.prevent="loginWithGoogle" class="navbar-item">ログイン</a>
           </div>
         </div>
       </div>
@@ -25,50 +25,67 @@
   </div>
 </template>
 
+<script>
+import firebase from '~/plugins/firebase';
+// Use firestore
+import 'firebase/firestore';
+const firestore  = firebase.firestore();
+/**
+ * TODO: すぐに解決できないので後で
+ */
+// const settings = {timestampsInSnapshots: true};
+// firestore.settings(settings);
+const googleProvider = new firebase.auth.GoogleAuthProvider();
+
+import getRedirectResult from '~/plugins/getRedirectResult';
+import auth from '~/plugins/auth';
+import saveData from '~/plugins/saveData';
+import { mapGetters } from 'vuex';
+
+const getUnixTime = () => {
+  const date = new Date();
+  return Math.floor(date.getTime() / 1000);
+};
+
+export default {
+  async beforeCreate() {
+    if (process.browser) {
+      const authUser = await auth();
+      console.log(authUser);
+      if (authUser === false) {
+        console.log('未ログイン');
+      }
+      // ログイン時の情報取得
+      const result = await getRedirectResult();
+      if (result.user === null) return;
+
+      console.log('signupします')
+      const userData = result.user;
+      const userUid = userData.uid;
+      const usersRef = firestore.collection('users').doc(userUid);
+      let newUserData = {
+        displayName: userData.displayName,
+        email      : userData.email,
+      };
+      // Signup
+      this.userId = userData.uid;
+      newUserData.created = getUnixTime();
+      newUserData.userId = userUid;
+      newUserData.picture = 'https://res.cloudinary.com/guidesquare/image/upload/v1526218605/profile-default.png';
+      await saveData(usersRef, newUserData);
+      // const userInfo = await getUser(userUid, firestore);
+      this.user = userInfo.data();
+    }
+  },
+  methods: {
+    loginWithGoogle() {
+      firebase.auth().signInWithRedirect(googleProvider);
+    }
+  }
+}
+</script>
+
+
 <style>
-html {
-  font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  font-size: 16px;
-  word-spacing: 1px;
-  -ms-text-size-adjust: 100%;
-  -webkit-text-size-adjust: 100%;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-font-smoothing: antialiased;
-  box-sizing: border-box;
-}
-
-*, *:before, *:after {
-  box-sizing: border-box;
-  margin: 0;
-}
-
-.button--green {
-  display: inline-block;
-  border-radius: 4px;
-  border: 1px solid #3b8070;
-  color: #3b8070;
-  text-decoration: none;
-  padding: 10px 30px;
-}
-
-.button--green:hover {
-  color: #fff;
-  background-color: #3b8070;
-}
-
-.button--grey {
-  display: inline-block;
-  border-radius: 4px;
-  border: 1px solid #35495e;
-  color: #35495e;
-  text-decoration: none;
-  padding: 10px 30px;
-  margin-left: 15px;
-}
-
-.button--grey:hover {
-  color: #fff;
-  background-color: #35495e;
-}
 </style>
 

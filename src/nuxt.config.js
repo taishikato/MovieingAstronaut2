@@ -31,7 +31,7 @@ module.exports = {
       }
     },
     publicPath: '/',
-    vendor: ['isomorphic-fetch'],
+    vendor: ['~/plugins/firebase'],
     extraCSS: true,
     babel: {
       presets: [
