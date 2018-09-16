@@ -1,6 +1,6 @@
 <template>
   <div>
-    <nav class="navbar is-fixed-top" role="navigation" aria-label="main navigation">
+    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
       <div class="container">
         <div class="navbar-brand">
           <a class="navbar-item" href="/">
@@ -44,6 +44,7 @@ import getRedirectResult from '~/plugins/getRedirectResult';
 import auth from '~/plugins/auth';
 import saveData from '~/plugins/saveData';
 import getUser from '~/plugins/getUser';
+import updateData from '~/plugins/updateData';
 import { mapGetters } from 'vuex';
 
 const getUnixTime = () => {
@@ -70,8 +71,6 @@ export default {
       // ログイン時の情報取得
       const result = await getRedirectResult();
       if (result.user !== null) {
-
-        console.log('signupします');
         const userData = result.user;
         const userUid = userData.uid;
         const usersRef = firestore.collection('users').doc(userUid);
@@ -79,15 +78,24 @@ export default {
           displayName: userData.displayName,
           email: userData.email,
         };
-        // Signup
-        this.userId = userData.uid;
-        newUserData.created = getUnixTime();
-        newUserData.userId = userUid;
-        newUserData.picture = 'https://res.cloudinary.com/guidesquare/image/upload/v1526218605/profile-default.png';
-        await saveData(usersRef, newUserData);
-        const userInfo = await getUser(usersRef);
-        this.user = userInfo.data();
-        console.log(this.user);
+        const getUserResult = await getUser(usersRef);
+        if (getUserResult.exists === false) {
+          // Sign up
+          console.log('sign up');
+          this.userId = userData.uid;
+          newUserData.created = getUnixTime();
+          newUserData.userId = userUid;
+          newUserData.picture = 'https://res.cloudinary.com/guidesquare/image/upload/v1526218605/profile-default.png';
+          await saveData(usersRef, newUserData);
+          const userInfo = await getUser(usersRef);
+        } else {
+          // Login
+          console.log('login');
+          const changeItem = {
+            lastLogin: getUnixTime()
+          };
+          await updateData(usersRef, changeItem);
+        }
       }
 
       // Vuex
