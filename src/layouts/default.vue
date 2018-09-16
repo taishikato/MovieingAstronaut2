@@ -1,6 +1,6 @@
 <template>
   <div>
-    <nav class="navbar is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+    <nav class="navbar is-transparent is-fixed-top is-primary" role="navigation" aria-label="main navigation">
       <div class="container">
         <div class="navbar-brand">
           <a class="navbar-item" href="/">
@@ -15,15 +15,33 @@
         </div>
 
         <div id="navbarExampleTransparentExample" class="navbar-menu">
-          <div class="navbar-start">
-            <a @click.prevent="loginWithGoogle" class="navbar-item">ログイン</a>
-          </div>
-          <div class="navbar-start">
-            <a @click.prevent="logout" class="navbar-item">ログアウト</a>
+          <div class="navbar-end">
+            <div class="navbar-item">
+              <div class="field is-grouped">
+                <p v-if="isLoading" class="control">
+                  <a class="navbar-item">
+                    <span class="icon">
+                      <i class="fas fa-spinner fa-spin"></i>
+                    </span>
+                  </a>
+                </p>
+                <p v-if="isLogin === false && isLoading === false" class="control">
+                  <a @click.prevent="loginWithGoogle" class="navbar-item">
+                    Login / Sign up
+                  </a>
+                </p>
+                <p v-if="isLogin && isLoading === false" class="control">
+                  <a @click.prevent="logout" class="navbar-item">
+                    Logout
+                  </a>
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </nav>
+    
     <nuxt/>
   </div>
 </template>
@@ -63,9 +81,9 @@ export default {
   async beforeCreate() {
     if (process.browser) {
       const authUser = await auth();
-      console.log(authUser);
       if (authUser === false) {
         console.log('未ログイン');
+        this.isLoading = false;
         return;
       }
       // ログイン時の情報取得
