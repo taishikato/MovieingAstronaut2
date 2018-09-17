@@ -1,10 +1,10 @@
 <template>
   <div>
-    <nav class="navbar is-transparent is-fixed-top is-primary" role="navigation" aria-label="main navigation">
+    <nav class="navbar is-transparent is-fixed-top is-warning" role="navigation" aria-label="main navigation">
       <div class="container">
         <div class="navbar-brand">
           <a class="navbar-item" href="/">
-            MA
+            Movieing Astronaut
           </a>
 
           <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
@@ -16,6 +16,21 @@
 
         <div id="navbarExampleTransparentExample" class="navbar-menu">
           <div class="navbar-end">
+            <div v-if="isLogin && isLoading === false" class="navbar-item has-dropdown is-hoverable">
+              <a class="navbar-link">
+                {{ user.displayName }}
+              </a>
+
+              <div class="navbar-dropdown is-right">
+                <a :href="`/u/${user.userId}`" class="navbar-item">
+                  Profile
+                </a>
+                <a @click.prevent="logout" class="navbar-item">
+                  Logout
+                </a>
+              </div>
+            </div>
+
             <div class="navbar-item">
               <div class="field is-grouped">
                 <p v-if="isLoading" class="control">
@@ -28,11 +43,6 @@
                 <p v-if="isLogin === false && isLoading === false" class="control">
                   <a @click.prevent="loginWithGoogle" class="navbar-item">
                     Login / Sign up
-                  </a>
-                </p>
-                <p v-if="isLogin && isLoading === false" class="control">
-                  <a @click.prevent="logout" class="navbar-item">
-                    Logout
                   </a>
                 </p>
               </div>
@@ -82,7 +92,7 @@ export default {
     if (process.browser) {
       const authUser = await auth();
       if (authUser === false) {
-        console.log('未ログイン');
+        console.log('not login');
         this.isLoading = false;
         return;
       }
@@ -91,7 +101,6 @@ export default {
       if (result.user !== null) {
         const userData = result.user;
         const userUid = userData.uid;
-        const usersRef = firestore.collection('users').doc(userUid);
         let newUserData = {
           displayName: userData.displayName,
           email: userData.email,
@@ -105,7 +114,6 @@ export default {
           newUserData.userId = userUid;
           newUserData.picture = 'https://res.cloudinary.com/guidesquare/image/upload/v1526218605/profile-default.png';
           await saveData(usersRef, newUserData);
-          const userInfo = await getUser(usersRef);
         } else {
           // Login
           console.log('login');
@@ -116,6 +124,9 @@ export default {
         }
       }
 
+      const usersRef = firestore.collection('users').doc(authUser.uid);
+      const getUserResult = await getUser(usersRef);
+
       // Vuex
       // Firestoreとバインド
       await this.$store.dispatch('BIND_USER', authUser);
@@ -123,7 +134,12 @@ export default {
       this.$store.commit('changeLoginStatus', {
         status: true
       });
+      // Userを変更
+      this.$store.commit('changeUser', {
+        user: getUserResult.data(),
+      });
       this.isLogin = this.$store.getters.getLoginStatus;
+      this.user = this.$store.getters.getUserInfo;
       this.isLoading = false;
     }
   },
