@@ -1,6 +1,6 @@
 <template>
   <div>
-    <nav class="navbar is-transparent is-fixed-top is-warning" role="navigation" aria-label="main navigation">
+    <nav class="navbar is-transparent is-fixed-top is-white" role="navigation" aria-label="main navigation">
       <div class="container">
         <div class="navbar-brand">
           <a class="navbar-item" href="/">
@@ -168,5 +168,11 @@ export default {
 
 
 <style>
+html {
+  background: #EFF3F4;
+}
+a {
+  color: darkslategray;
+}
 </style>
 

@@ -48,7 +48,10 @@ app.get('/search', (req, res) => {
     const query = req.query.query;
     const { data } = await axios.get(`https://www.omdbapi.com/?s=${query}&apikey=1b46575f`);
     req.maData = {};
-    req.maData.apiResult = data;
+    req.maData = {
+      apiResult: data,
+      query
+    };
     nuxt.renderRoute(`/search/${query}`, { req })
     .then(result => {
       res.send(result.html);
