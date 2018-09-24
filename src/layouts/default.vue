@@ -15,6 +15,19 @@
         </div>
 
         <div id="navbarExampleTransparentExample" class="navbar-menu">
+
+          <div class="navbar-start">
+            <form action="/search" method="get" class="navbar-item">
+            <div class="field has-addons">
+                <div class="control">
+                  <input class="input" name="query" type="text" placeholder="Reign Over Me">
+                </div>
+                <div class="control">
+                  <input class="button" type="submit" value="Search">
+                </div>
+            </div>
+            </form>
+          </div>
           <div class="navbar-end">
             <div v-if="isLogin && isLoading === false" class="navbar-item has-dropdown is-hoverable">
               <a class="navbar-link">
