@@ -48,7 +48,7 @@ export default {
 
 <style scoped>
 #search-title {
-  padding: 20px;
+  padding-top: 20px;
 }
 section .container {
   padding: 20px;

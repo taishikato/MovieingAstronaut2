@@ -26,7 +26,17 @@
     </section>
     <section class="section">
       <div id="quote-container" class="container">
-        <p><a class="button is-light" :href="`/quote/add/${movie.imdbID}`">Add Quote</a></p>
+        <div>
+          <button v-if="addingQuote === false" @click="startAddingQuote" class="button is-light">Add Quote</button>
+          <button v-if="addingQuote" @click="addQuote" :disabled="isSaving || addingQuoteCount === 0" class="button">Add</button>
+          <button v-if="addingQuote" @click="cancelAddingQuote" class="button is-danger is-inverted">Cancel</button>
+          <div v-if="finishAdding" class="notification is-success" style="margin-top: 5px;">
+            Success To Add Your Post!
+          </div>
+          <div v-if="addingQuote" id="addTextArea" class="control">
+            <textarea v-model="quote" class="textarea" type="text" placeholder="Quote"></textarea>
+          </div>
+        </div>
         <ul id="quote-list">
           <li>
             <article class="media">
@@ -55,6 +65,21 @@
 </template>
 
 <script>
+import firebase from '~/plugins/firebase';
+// Use firestore
+import 'firebase/firestore';
+const firestore  = firebase.firestore();
+
+// Plugins
+import addData from '~/plugins/addData';
+
+// Refs
+const quotesRef = firestore.collection('quotes');
+
+const getUnixTime = () => {
+  const date = new Date();
+  return Math.floor(date.getTime() / 1000);
+};
 export default {
   async asyncData(context) {
     /*
@@ -63,6 +88,40 @@ export default {
     };
     */
     return { movie: context.req.maData.apiResult };
+  },
+  data() {
+    return {
+      addingQuote: false,
+      quote: '',
+      isSaving: false,
+      finishAdding: false,
+    }
+  },
+  computed: {
+    addingQuoteCount() {
+      return this.quote.length;
+    }
+  },
+  methods: {
+    startAddingQuote() {
+      this.addingQuote = true;
+    },
+    cancelAddingQuote() {
+      this.addingQuote = false;
+    },
+    async addQuote() {
+      this.isSaving = true;
+      const addDataSet = {
+        content: this.quote,
+        movieId: this.$nuxt.$route.params.id,
+        userId: this.$store.getters.getUserInfo.userId,
+        created: getUnixTime(),
+      };
+      await addData(quotesRef, addDataSet);
+      this.isSaving = false;
+      this.finishAdding = true;
+      console.log('Success');
+    },
   }
 }
 </script>
@@ -75,6 +134,9 @@ export default {
 .hero-body {
   background-color: rgba(0,0,0,0.6);
 }
+.section {
+  padding-top: 0;
+}
 .hero-body .column .title, .hero-body .column .subtitle {
   color: aliceblue;
 }
@@ -84,5 +146,8 @@ export default {
 }
 #quote-list {
   margin-top: 30px;
+}
+#addTextArea {
+  margin-top: 10px;
 }
 </style>
