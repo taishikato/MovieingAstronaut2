@@ -39,7 +39,7 @@ export default {
     };
     */
     return { 
-      query: context.query.query,
+      query: context.req.maData.query,
       movies: context.req.maData.apiResult.Search
     };
   }
