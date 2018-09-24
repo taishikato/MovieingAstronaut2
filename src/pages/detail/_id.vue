@@ -57,10 +57,12 @@
 <script>
 export default {
   async asyncData(context) {
+    /*
     return {
       movie: {"Title": "Reign Over Me", "Year": "2007", "Rated": "R", "Released": "23 Mar 2007", "Runtime": "124 min", "Genre": "Drama", "Director": "Mike Binder", "Writer": "Mike Binder", "Actors": "Adam Sandler, Don Cheadle, Jada Pinkett Smith, Liv Tyler", "Plot": "A man who lost his family in the September 11 attack on New York City runs into his old college roommate. Rekindling the friendship is the one thing that appears able to help the man recover from his grief.", "Language": "English", "Country": "USA", "Awards": "3 nominations.", "Poster": "https://m.media-amazon.com/images/M/MV5BOTYyMTExNTgwNF5BMl5BanBnXkFtZTcwMDY4MTEzMw@@._V1_SX300.jpg", "Ratings": [ { "Source": "Internet Movie Database", "Value": "7.5/10" }, { "Source": "Rotten Tomatoes", "Value": "64%" }, { "Source": "Metacritic", "Value": "61/100" } ], "Metascore": "61", "imdbRating": "7.5", "imdbVotes": "88,683", "imdbID": "tt0490204", "Type": "movie", "DVD": "09 Oct 2007", "BoxOffice": "&pound;19,661,987", "Production": "Sony Pictures", "Website": "http://www.sonypictures.com/movies/reignoverme/index.html", "Response": "True"}
     };
-    // return { movie: context.req.maData.apiResult };
+    */
+    return { movie: context.req.maData.apiResult };
   }
 }
 </script>

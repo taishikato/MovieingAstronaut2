@@ -171,5 +171,8 @@ export default {
 html {
   background: #EFF3F4;
 }
+a {
+  color: darkslategray;
+}
 </style>
 
