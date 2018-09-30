@@ -16,6 +16,9 @@ module.exports = {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ]
   },
+  modules: [
+    '@nuxtjs/moment',
+  ],
   /*
   ** Customize the progress bar color
   */
@@ -35,7 +38,8 @@ module.exports = {
     extraCSS: true,
     babel: {
       presets: [
-        'stage-0'
+        'stage-0',
+        'env',
       ],
       plugins: [
         ["transform-runtime", {
