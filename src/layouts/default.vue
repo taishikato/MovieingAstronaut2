@@ -8,9 +8,9 @@
           </a>
 
           <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
+            <span aria-hidden="true"/>
+            <span aria-hidden="true"/>
+            <span aria-hidden="true"/>
           </a>
         </div>
 
@@ -18,14 +18,14 @@
 
           <div class="navbar-start">
             <form action="/search" method="get" class="navbar-item">
-            <div class="field has-addons">
+              <div class="field has-addons">
                 <div class="control">
-                  <input class="input" name="query" type="text" placeholder="Reign Over Me">
+                  <input class="input is-rounded" name="query" type="text" placeholder="Reign Over Me">
                 </div>
                 <div class="control">
-                  <input class="button" type="submit" value="Search">
+                  <input class="button is-rounded" type="submit" value="Search">
                 </div>
-            </div>
+              </div>
             </form>
           </div>
           <div class="navbar-end">
@@ -38,7 +38,10 @@
                 <a :href="`/u/${user.userId}`" class="navbar-item">
                   Profile
                 </a>
-                <a @click.prevent="logout" class="navbar-item">
+                <a href="/u/likes" class="navbar-item">
+                  Likes
+                </a>
+                <a class="navbar-item" @click.prevent="logout">
                   Logout
                 </a>
               </div>
@@ -49,12 +52,12 @@
                 <p v-if="isLoading" class="control">
                   <a class="navbar-item">
                     <span class="icon">
-                      <i class="fas fa-spinner fa-spin"></i>
+                      <i class="fas fa-spinner fa-spin"/>
                     </span>
                   </a>
                 </p>
                 <p v-if="isLogin === false && isLoading === false" class="control">
-                  <a @click.prevent="loginWithGoogle" class="navbar-item">
+                  <a class="navbar-item" @click.prevent="loginWithGoogle">
                     Login / Sign up
                   </a>
                 </p>
@@ -70,110 +73,110 @@
 </template>
 
 <script>
-import firebase from '~/plugins/firebase';
+import firebase from "~/plugins/firebase"
 // Use firestore
-import 'firebase/firestore';
-const firestore  = firebase.firestore();
+import "firebase/firestore"
+const firestore = firebase.firestore()
 /**
  * TODO: すぐに解決できないので後で
  */
 // const settings = {timestampsInSnapshots: true};
 // firestore.settings(settings);
-const googleProvider = new firebase.auth.GoogleAuthProvider();
+const googleProvider = new firebase.auth.GoogleAuthProvider()
 
-import getRedirectResult from '~/plugins/getRedirectResult';
-import auth from '~/plugins/auth';
-import saveData from '~/plugins/saveData';
-import getUser from '~/plugins/getUser';
-import updateData from '~/plugins/updateData';
-import { mapGetters } from 'vuex';
+import getRedirectResult from "~/plugins/getRedirectResult"
+import auth from "~/plugins/auth"
+import saveData from "~/plugins/saveData"
+import getUser from "~/plugins/getUser"
+import updateData from "~/plugins/updateData"
 
 const getUnixTime = () => {
-  const date = new Date();
-  return Math.floor(date.getTime() / 1000);
-};
+  const date = new Date()
+  return Math.floor(date.getTime() / 1000)
+}
 
 export default {
   data() {
     return {
       user: null,
       isLogin: false,
-      isLoading: true,
+      isLoading: true
     }
   },
   async beforeCreate() {
     if (process.browser) {
-      const authUser = await auth();
+      const authUser = await auth()
       if (authUser === false) {
-        console.log('not login');
-        this.isLoading = false;
-        return;
+        console.log("not login")
+        this.isLoading = false
+        return
       }
       // ログイン時の情報取得
-      const result = await getRedirectResult();
+      const result = await getRedirectResult()
       if (result.user !== null) {
-        const userData = result.user;
-        const userUid = userData.uid;
+        const userData = result.user
+        const userUid = userData.uid
         let newUserData = {
           displayName: userData.displayName,
-          email: userData.email,
-        };
-        const getUserResult = await getUser(usersRef);
+          email: userData.email
+        }
+        const getUserResult = await getUser(usersRef)
         if (getUserResult.exists === false) {
           // Sign up
-          console.log('sign up');
-          this.userId = userData.uid;
-          newUserData.created = getUnixTime();
-          newUserData.userId = userUid;
-          newUserData.picture = 'https://res.cloudinary.com/guidesquare/image/upload/v1526218605/profile-default.png';
-          await saveData(usersRef, newUserData);
+          console.log("sign up")
+          this.userId = userData.uid
+          newUserData.created = getUnixTime()
+          newUserData.userId = userUid
+          newUserData.picture =
+            "https://res.cloudinary.com/guidesquare/image/upload/v1526218605/profile-default.png"
+          await saveData(usersRef, newUserData)
         } else {
           // Login
-          console.log('login');
+          console.log("login")
           const changeItem = {
             lastLogin: getUnixTime()
-          };
-          await updateData(usersRef, changeItem);
+          }
+          await updateData(usersRef, changeItem)
         }
       }
 
-      const usersRef = firestore.collection('users').doc(authUser.uid);
-      const getUserResult = await getUser(usersRef);
+      const usersRef = firestore.collection("users").doc(authUser.uid)
+      const getUserResult = await getUser(usersRef)
 
       // Vuex
       // Firestoreとバインド
-      await this.$store.dispatch('BIND_USER', authUser);
+      await this.$store.dispatch("BIND_USER", authUser)
       // Login Statusを変更
-      this.$store.commit('changeLoginStatus', {
+      this.$store.commit("changeLoginStatus", {
         status: true
-      });
+      })
       // Userを変更
-      this.$store.commit('changeUser', {
-        user: getUserResult.data(),
-      });
-      this.isLogin = this.$store.getters.getLoginStatus;
-      this.user = this.$store.getters.getUserInfo;
-      this.isLoading = false;
+      this.$store.commit("changeUser", {
+        user: getUserResult.data()
+      })
+      this.isLogin = this.$store.getters.getLoginStatus
+      this.user = this.$store.getters.getUserInfo
+      this.isLoading = false
     }
   },
   methods: {
     async logout() {
-      const self = this;
+      const self = this
       // Logout
-      await firebase.auth().signOut();
+      await firebase.auth().signOut()
       // Firestoreとアンバインド
-      await this.$store.dispatch('UNBIND_USER');
+      await this.$store.dispatch("UNBIND_USER")
       // CommitでVuexの値を変更
-      this.$store.commit('changeUser', {
+      this.$store.commit("changeUser", {
         user: null
-      });
-      self.$store.commit('changeLoginStatus',{
+      })
+      self.$store.commit("changeLoginStatus", {
         status: false
-      });
-      self.isLogin = false;
+      })
+      self.isLogin = false
     },
     loginWithGoogle() {
-      firebase.auth().signInWithRedirect(googleProvider);
+      firebase.auth().signInWithRedirect(googleProvider)
     }
   }
 }
@@ -182,10 +185,9 @@ export default {
 
 <style>
 html {
-  background: #EFF3F4;
+  background: #eff3f4;
 }
 a {
   color: darkslategray;
 }
 </style>
-
