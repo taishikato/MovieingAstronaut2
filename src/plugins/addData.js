@@ -6,10 +6,14 @@
 
 export default function addData(collection, data) {
   return new Promise((resolve, reject) => {
-    collection.add(data).then((result) => {
-      resolve(result);
-    }).catch((err) => {
-      reject(false);
-    });
+    collection
+      .add(data)
+      .then(result => {
+        resolve(result)
+      })
+      .catch(err => {
+        console.log(err)
+        reject(false)
+      })
   })
 }
