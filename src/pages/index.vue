@@ -13,7 +13,7 @@
       </div>
     </section>
     <div class="container">
-      {{ newestQuote }}
+      <!-- {{ newestQuote }} -->
       <div class="field">
         <form action="/search" method="get">
           <div class="control">

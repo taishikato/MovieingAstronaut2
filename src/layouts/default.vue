@@ -70,7 +70,9 @@
         </div>
       </div>
     </nav>
-    {{ user }}
+    {{ this.$store.getters.getUserInfo }}
+    isLogin
+    {{ this.$store.getters.getLoginStatus }}
     <nuxt/>
   </div>
 </template>
@@ -117,7 +119,6 @@ export default {
       // ログイン時の情報取得
       const result = await getRedirectResult()
       if (result.user !== null) {
-        console.log("here")
         await this.setCookie()
         const userData = result.user
         const userUid = userData.uid
@@ -152,19 +153,24 @@ export default {
       // Firestoreとバインド
       await this.$store.dispatch("BIND_USER", authUser)
       // Login Statusを変更
+      /*
       this.$store.commit("changeLoginStatus", {
         status: true
       })
+      */
       // Userを変更
       /*
       this.$store.commit("changeUser", {
         user: getUserResult.data()
       })
-      */
+      
       this.isLogin = this.$store.getters.getLoginStatus
       this.user = this.$store.getters.getUserInfo
+      */
       this.isLoading = false
     }
+    // this.isLogin = this.$store.getters.getLoginStatus
+    // this.user = this.$store.getters.getUserInfo
   },
   methods: {
     async logout() {
@@ -189,7 +195,7 @@ export default {
       // Set the __session cookie.
       const token = await firebase.auth().currentUser.getIdToken(true)
       // set the __session cookie
-      document.cookie = "__session=" + token + ";max-age=25200"
+      document.cookie = `__session=${token};max-age=25200`
       console.log(`token: ${token}`)
       console.log(
         "Sending request to",
