@@ -40,7 +40,7 @@ export default {
           },
           movie: {
             Poster:
-              "https://t2.genius.com/unsafe/0x1300/https%3A%2F%2Fimages.genius.com%2F9c584b7a15a9a02ee3cb61b089706d74.1080x1080x1.jpg"
+              "https://images.genius.com/19204165202cba9a1e8fb97d94cfaecf.900x500x1.jpg"
           }
         }
       }

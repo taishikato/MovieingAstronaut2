@@ -62,12 +62,15 @@
                   </a>
                 </p>
               </div>
+              <a class="navbar-item" @click.prevent="loginWithGoogle">
+                Login / Sign up
+              </a>
             </div>
           </div>
         </div>
       </div>
     </nav>
-    
+    {{ user }}
     <nuxt/>
   </div>
 </template>
@@ -114,6 +117,8 @@ export default {
       // ログイン時の情報取得
       const result = await getRedirectResult()
       if (result.user !== null) {
+        console.log("here")
+        await this.setCookie()
         const userData = result.user
         const userUid = userData.uid
         let newUserData = {
@@ -151,9 +156,11 @@ export default {
         status: true
       })
       // Userを変更
+      /*
       this.$store.commit("changeUser", {
         user: getUserResult.data()
       })
+      */
       this.isLogin = this.$store.getters.getLoginStatus
       this.user = this.$store.getters.getUserInfo
       this.isLoading = false
@@ -177,11 +184,22 @@ export default {
     },
     loginWithGoogle() {
       firebase.auth().signInWithRedirect(googleProvider)
+    },
+    async setCookie() {
+      // Set the __session cookie.
+      const token = await firebase.auth().currentUser.getIdToken(true)
+      // set the __session cookie
+      document.cookie = "__session=" + token + ";max-age=25200"
+      console.log(`token: ${token}`)
+      console.log(
+        "Sending request to",
+        window.location.href,
+        "with ID token in __session cookie."
+      )
     }
   }
 }
 </script>
-
 
 <style>
 html {

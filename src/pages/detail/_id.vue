@@ -24,6 +24,8 @@
         </div>
       </div>
     </section>
+    aaa
+    {{ loginUser }}
     <section class="section">
       <div id="quote-container" class="container">
         <div>
@@ -141,7 +143,11 @@ export default {
       }
     }
     */
-    return { movie: context.req.maData.apiResult }
+    console.log(context.req.maData)
+    return {
+      movie: context.req.maData.apiResult,
+      loginUser: context.req.maData.loginUser
+    }
   },
   data() {
     return {

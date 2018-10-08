@@ -24,7 +24,12 @@ const store = () =>
       changeLoginStatus(state, isLogin) {
         state.loginStatus = isLogin.status
       },
+      /*
       changeUser(state, data) {
+        state.user = data.user
+      },
+      */
+      user(state, data) {
         state.user = data.user
       },
       ...firebaseMutations
@@ -39,7 +44,17 @@ const store = () =>
       }),
       UNBIND_USER: firebaseAction(({ unbindFirebaseRef }) => {
         unbindFirebaseRef("user")
-      })
+      }),
+      nuxtServerInit({ commit }, { req }) {
+        console.log("Begin nuxtServerInit")
+        if (req.maData.loginUser !== {}) {
+          commit("user", {
+            user: req.maData.loginUser
+          })
+        }
+        console.log("End nuxtServerInit")
+        return
+      }
     }
   })
 

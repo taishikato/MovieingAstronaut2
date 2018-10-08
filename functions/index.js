@@ -3,6 +3,10 @@ const admin = require('firebase-admin');
 const { Nuxt } = require('nuxt');
 const express = require('express');
 const axios = require('axios');
+const cookieParser = require('cookie-parser')();
+const bodyParser = require('body-parser');
+const setMaData = require('./middleware/setMaData');
+const getLoginUser = require('./middleware/getLoginUser');
 
 const app = express();
 
@@ -21,6 +25,14 @@ const config = {
 
 const nuxt = new Nuxt(config);
 
+// middleware
+app.use(cookieParser);
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.use(setMaData);
+app.use(getLoginUser);
+
+
 app.get('/', (req, res) => {
   (async () => {
     // firestoreからセリフ情報を1件取得
@@ -36,7 +48,6 @@ app.get('/', (req, res) => {
       movie: data,
     };
 
-    req.maData = {};
     req.maData.newestQuote = newestQuote;
     const result = await nuxt.renderRoute('/', { req });
     res.send(result.html);
@@ -47,7 +58,6 @@ app.get('/search', (req, res) => {
   (async () => {
     const query = req.query.query;
     const { data } = await axios.get(`https://www.omdbapi.com/?s=${query}&apikey=1b46575f`);
-    req.maData = {};
     req.maData = {
       apiResult: data,
       query
@@ -66,7 +76,6 @@ app.get('/detail/:movie_id', (req, res) => {
   const movieId = req.params.movie_id;
   (async () => {
     const { data } = await axios.get(`https://www.omdbapi.com/?i=${movieId}&apikey=1b46575f`);
-    req.maData = {};
     req.maData.apiResult = data;
     nuxt.renderRoute(`/detail/${movieId}`, { req })
     .then(result => {
@@ -82,7 +91,6 @@ app.get('/quote/add/:movie_id', (req, res) => {
   const movieId = req.params.movie_id;
   (async () => {
     const { data } = await axios.get(`https://www.omdbapi.com/?i=${movieId}&apikey=1b46575f`);
-    req.maData = {};
     req.maData.apiResult = data;
     const result = await nuxt.renderRoute(`/quote/add/${movieId}`, { req })
     res.send(result.html);
@@ -94,7 +102,6 @@ app.get('/u/:user_id', (req, res) => {
     const userId = req.params.user_id;
     // firestoreからユーザ情報を取得
     const userData = await firestore.collection('users').doc(userId).get();
-    req.maData = {};
     req.maData.userData = userData.data();
     const result = await nuxt.renderRoute(`/u/${userId}`, { req })
     res.send(result.html);
