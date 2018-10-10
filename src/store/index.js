@@ -41,13 +41,11 @@ const store = () =>
         unbindFirebaseRef("user")
       }),
       nuxtServerInit({ commit }, { req }) {
+        commit("changeLoginStatus", {
+          status: req.maData.isLogin
+        })
         commit("changeUser", {
           user: req.maData.loginUser
-        })
-        let isLogin = false
-        if (req.maData.loginUser !== {}) isLogin = true
-        commit("changeLoginStatus", {
-          isLogin
         })
       }
     }

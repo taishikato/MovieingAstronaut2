@@ -31,7 +31,7 @@ const validateFirebaseIdToken = async req => {
     console.log('ID Token correctly decoded', decodedIdToken);
     return decodedIdToken;
   } catch(err) {
-    console.error('Error while verifying Firebase ID token:', error);
+    console.error('Error while verifying Firebase ID token:', err);
     return false;
   }
 };

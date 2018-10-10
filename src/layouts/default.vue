@@ -29,13 +29,13 @@
             </form>
           </div>
           <div class="navbar-end">
-            <div v-if="isLogin && isLoading === false" class="navbar-item has-dropdown is-hoverable">
+            <div v-if="this.$store.getters.getLoginStatus" class="navbar-item has-dropdown is-hoverable">
               <a class="navbar-link">
-                {{ user.displayName }}
+                {{ this.$store.getters.getUserInfo.displayName }}
               </a>
 
               <div class="navbar-dropdown is-right">
-                <a :href="`/u/${user.userId}`" class="navbar-item">
+                <a :href="`/u/${this.$store.getters.getUserInfo.userId}`" class="navbar-item">
                   Profile
                 </a>
                 <a href="/u/likes" class="navbar-item">
@@ -49,22 +49,12 @@
 
             <div class="navbar-item">
               <div class="field is-grouped">
-                <p v-if="isLoading" class="control">
-                  <a class="navbar-item">
-                    <span class="icon">
-                      <i class="fas fa-spinner fa-spin"/>
-                    </span>
-                  </a>
-                </p>
-                <p v-if="isLogin === false && isLoading === false" class="control">
+                <p v-if="this.$store.getters.getLoginStatus === false" class="control">
                   <a class="navbar-item" @click.prevent="loginWithGoogle">
                     Login / Sign up
                   </a>
                 </p>
               </div>
-              <a class="navbar-item" @click.prevent="loginWithGoogle">
-                Login / Sign up
-              </a>
             </div>
           </div>
         </div>
@@ -109,6 +99,7 @@ export default {
     }
   },
   async beforeCreate() {
+    this.isLogin = this.$store.getters.getLoginStatus
     if (process.browser) {
       const authUser = await auth()
       if (authUser === false) {
@@ -151,7 +142,7 @@ export default {
 
       // Vuex
       // Firestoreとバインド
-      await this.$store.dispatch("BIND_USER", authUser)
+      // await this.$store.dispatch("BIND_USER", authUser)
       // Login Statusを変更
       /*
       this.$store.commit("changeLoginStatus", {
@@ -195,13 +186,8 @@ export default {
       // Set the __session cookie.
       const token = await firebase.auth().currentUser.getIdToken(true)
       // set the __session cookie
-      document.cookie = `__session=${token};max-age=25200`
-      console.log(`token: ${token}`)
-      console.log(
-        "Sending request to",
-        window.location.href,
-        "with ID token in __session cookie."
-      )
+      // 1 week
+      document.cookie = `__session=${token};max-age=604800`
     }
   }
 }
